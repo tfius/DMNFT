@@ -14,8 +14,11 @@ DMT is ERC20 Token that can Mint NFT with value
 To deploy: 
  - depoly Collection first, get address
  - deploy DMT token with Collection contract address to link them together 
- - 
+ - call Collection.setMinter with address of DMT 
+ - now DMT can mint NFTs in Collection 
+ - 0.05% of buys and sells go to DMT treasury 
+   
 Because I am not completly sure if everything is inlined with cryptoeconomics, I am publishing it and i am open for discussion. 
-No nada. No tests, as is, alpha, not even beta for your consideration. 
+No nada. No tests, as is, alpha, not even beta. For your consideration. 
 
 Do not use in production. 
