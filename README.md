@@ -18,7 +18,8 @@ To deploy:
  - now DMT can mint NFTs in Collection 
  - 0.05% of buys and sells go to DMT treasury 
    
-Because I am not completly sure if everything is inlined with cryptoeconomics, I am publishing it and i am open for discussion. 
-No nada. No tests, as is, alpha, not even beta. For your consideration. 
+Depoloyed on Polygon
+MetaNFT at 0xE1B74966fFBf19A7360bCE9bc1D86c7546D09EE2
+DMTNFT at 0x7eF94f51a5355456e498d7643967D63e766eFcE2 
 
-Do not use in production. 
+MetaNFT points to metadata location and data location as bytes32, it's location should be on Swarm or IPFS. 
