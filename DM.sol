@@ -1,8 +1,12 @@
 // "SPDX-License-Identifier: MIT"
 // TEX 22.09.2020
-pragma solidity ^0.8.2;
+pragma solidity ^0.8.4;
 //pragma abicoder v2;
 //pragma abiencoder v2;
+
+// Polygon
+// MetaNFT at 0xE1B74966fFBf19A7360bCE9bc1D86c7546D09EE2  (TxHash: 0xab87a9c1d4ec860de55cebf167d734d94ecc0865d3b80ce3426162dec2acac46)
+// DMTNFT at 0x7eF94f51a5355456e498d7643967D63e766eFcE2  (TxHash: 0x7a3b9f858eb8e2bb2d0b892272022d50190b98abbca2bd9dab9fe42db58aaeb7)
 
 library Address {
   function isContract(address account) internal view returns (bool) {
@@ -192,7 +196,7 @@ interface IERC721Enumerable is IERC721 {
  * @title ERC721 Non-Fungible Token Standard basic implementation
  * @dev see https://github.com/ethereum/EIPs/blob/master/EIPS/eip-721.md
  */
-contract Collection is Context, ERC165, IERC721, IERC721Metadata, IERC721Enumerable {
+contract NFTCollection is Context, ERC165, IERC721, IERC721Metadata, IERC721Enumerable {
     using SafeMath for uint256;
     using Address for address;
     using Strings for uint256;
@@ -365,10 +369,10 @@ contract Collection is Context, ERC165, IERC721, IERC721Metadata, IERC721Enumera
     }
     /* @dev See {IERC721-approve}. */
     function approve(address to, uint256 tokenId) public virtual override {
-        address owner = Collection.ownerOf(tokenId);
+        address owner = NFTCollection.ownerOf(tokenId);
         require(to != owner, "ERC721: approval to current owner");
 
-        require(_msgSender() == owner || Collection.isApprovedForAll(owner, _msgSender()),
+        require(_msgSender() == owner || NFTCollection.isApprovedForAll(owner, _msgSender()),
             "ERC721: approve caller is not owner nor approved for all"
         );
 
@@ -449,8 +453,8 @@ contract Collection is Context, ERC165, IERC721, IERC721Metadata, IERC721Enumera
      */
     function _isApprovedOrOwner(address spender, uint256 tokenId) internal view virtual returns (bool) {
         require(_exists(tokenId), "ERC721: operator query for nonexistent token");
-        address owner = Collection.ownerOf(tokenId);
-        return (spender == owner || getApproved(tokenId) == spender || Collection.isApprovedForAll(owner, spender));
+        address owner = NFTCollection.ownerOf(tokenId);
+        return (spender == owner || getApproved(tokenId) == spender || NFTCollection.isApprovedForAll(owner, spender));
     }
     /**
      * @dev Safely mints `tokenId` and transfers it to `to`.
@@ -503,7 +507,7 @@ contract Collection is Context, ERC165, IERC721, IERC721Metadata, IERC721Enumera
      * Emits a {Transfer} event.
      */
     function _burn(uint256 tokenId) internal virtual {
-        address owner = Collection.ownerOf(tokenId);
+        address owner = NFTCollection.ownerOf(tokenId);
 
         _beforeTokenTransfer(owner, address(0), tokenId);
 
@@ -594,7 +598,7 @@ contract Collection is Context, ERC165, IERC721, IERC721Metadata, IERC721Enumera
      * Emits a {Transfer} event.
      */
     function _transfer(address from, address to, uint256 tokenId) internal virtual {
-        require(Collection.ownerOf(tokenId) == from, "ERC721: transfer of token that is not own");
+        require(NFTCollection.ownerOf(tokenId) == from, "ERC721: transfer of token that is not own");
         require(to != address(0), "ERC721: transfer to the zero address");
 
         _beforeTokenTransfer(from, to, tokenId);
@@ -617,7 +621,7 @@ contract Collection is Context, ERC165, IERC721, IERC721Metadata, IERC721Enumera
      */
     function _approve(address to, uint256 tokenId) internal virtual {
         _tokenApprovals[tokenId] = to;
-        emit Approval(Collection.ownerOf(tokenId), to, tokenId);
+        emit Approval(NFTCollection.ownerOf(tokenId), to, tokenId);
     }
     /**
      * @dev Internal function to invoke {IERC721Receiver-onERC721Received} on a target address.
@@ -878,7 +882,7 @@ contract DataMarket is Context, IERC20, IERC20Metadata {
     string private _symbol;
     address payable private _nftAddress;
     mapping (address => mapping (address => uint256)) private _allowances;
-    mapping (uint256 => bool) private _minted;         // Mapping did tokenId already mint could be removed if using NFT.amount
+    mapping (uint256 => bool) private _minted;                                  // Mapping did tokenId already mint
     
     event Bought(uint256 amount);
     event Sold(uint256 amount);
@@ -928,7 +932,7 @@ contract DataMarket is Context, IERC20, IERC20Metadata {
     /* Owner can mint one token at the time*/
     function mintOne(uint256 tokenId) public {
         require(_minted[tokenId]==false,"Already minted"); 
-        Collection NFT = Collection(_nftAddress); 
+        NFTCollection NFT = NFTCollection(_nftAddress); 
         require(NFT.tokenChallenged(tokenId)==0,"challenged"); 
         address tokenOwner = NFT.ownerOf(tokenId);
         require(tokenOwner==msg.sender,"!owner"); 
@@ -939,7 +943,7 @@ contract DataMarket is Context, IERC20, IERC20Metadata {
     } 
     /* Owner mints all available tokens */
     function mintAll() public {
-        Collection NFT = Collection(_nftAddress); 
+        NFTCollection NFT = NFTCollection(_nftAddress); 
         uint256 amount = 0; 
         if(NFT.balanceOf(msg.sender)>0)
         {
@@ -960,7 +964,7 @@ contract DataMarket is Context, IERC20, IERC20Metadata {
     }
     /* @dev amount available to mint */
     function availableToMint(address account) public view returns (uint256) {
-        Collection NFT = Collection(_nftAddress); 
+        NFTCollection NFT = NFTCollection(_nftAddress); 
         uint256 amount = 0; 
         if(NFT.balanceOf(account)>0)
         {
@@ -1035,7 +1039,7 @@ contract DataMarket is Context, IERC20, IERC20Metadata {
         require(sender != address(0), "ERC20: transfer from the zero address");
         require(recipient != address(0), "ERC20: transfer to the zero address");
 
-        Collection NFT = Collection(_nftAddress); 
+        NFTCollection NFT = NFTCollection(_nftAddress); 
         require(NFT.balanceOf(sender)>0, "ERC20: no transfer without nft"); // if sender has NFT
 
         //_beforeTokenTransfer(sender, recipient, amount); 
@@ -1179,7 +1183,7 @@ contract DataMarket is Context, IERC20, IERC20Metadata {
          require(_balances[msg.sender] >= forTokenAmount, "ERC20: amount exceeds balance");
          _balances[msg.sender] -= (forTokenAmount);
          _imbalances[msg.sender] += (forTokenAmount); 
-         Collection NFT = Collection(_nftAddress); 
+         NFTCollection NFT = NFTCollection(_nftAddress); 
          NFT.mintForUser(msg.sender, forTokenAmount, to, metadataSwarmLocation, tokenDataSwarmLocation);
     }
     /* Issue a challenge for amount and datahash*/
@@ -1189,7 +1193,7 @@ contract DataMarket is Context, IERC20, IERC20Metadata {
         require(challenges[challengeHash]==0,"challenge exists");
         require(_balances[msg.sender]>=forAmount,"!balance");
         
-        Collection NFT = Collection(_nftAddress); 
+        NFTCollection NFT = NFTCollection(_nftAddress); 
         address owner = NFT.ownerOfTokenOfData(challengeHash); //
         require(receiver==owner,"token owner !receiver");
         uint256 tokenId = NFT.tokenOfData(challengeHash);
@@ -1216,7 +1220,8 @@ contract DataMarket is Context, IERC20, IERC20Metadata {
         uint256 challengeIndex = challenges[challengeHash]-1;
         Challenge memory c = allChallenges[challengeIndex]; 
         require(_approvedValidators[msg.sender]<_approvedValidators[c.issuer] ,"Not a validator"); // has to be higher rank than issuer so 1 beats 2 and 2 beats 3 and so on, 0 validator is not validator
-        Collection NFT = Collection(_nftAddress); 
+        
+        NFTCollection NFT = NFTCollection(_nftAddress); 
         uint256 tokenId = NFT.tokenOfData(challengeHash);
         require(NFT.tokenChallenged(tokenId)!=0,"already challenged");
 
